@@ -4,7 +4,7 @@ import { assets } from '../../assets/assets'
 
 const PlaceCard = ({place}) => {
   return (
-    <Link to={'/rooms/' + place.id} onClick={()=> scrollTo(0,0)} key={place.id} className='relative max-w-70 w-full rounded-xl overflow-hidden bg-white text-gray-500/90 shadow-[0px_4px_4px_rgba(0,0,0,0.05)]'>
+    <Link to={'/rooms/' + place._id} onClick={()=> scrollTo(0,0)} key={place.id} className='relative max-w-70 w-full rounded-xl overflow-hidden bg-white text-gray-500/90 shadow-[0px_4px_4px_rgba(0,0,0,0.05)]'>
       <img src={place.images[0]} alt="" />
 
       <div className='p-4 pt-5'>
