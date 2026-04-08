@@ -30,6 +30,7 @@ import upload_area from './uploadArea.svg'
 import location_icon from './locationIcon.svg'
 import dashboard_icon from './dashboardIcon.svg'
 import list_icon from './listIcon.svg'
+import rent_auth_cover from './rent-auth-cover.jpg'
 
 export const assets = {
 
@@ -52,7 +53,8 @@ export const assets = {
   calender_icon,
   location_icon,
   dashboard_icon,
-  list_icon
+  list_icon,
+  rent_auth_cover
 
 }
 

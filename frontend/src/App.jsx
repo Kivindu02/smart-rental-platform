@@ -6,16 +6,26 @@ import SpaceDetails from "./pages/SpaceDetails/SpaceDetails";
 import Layout from "./pages/ListOwner/Layout";
 import AddListing from "./pages/ListOwner/AddListing";
 import AllListing from "./pages/ListOwner/AllListing";
+import Login from "./pages/Auth/Login";
+import Register from "./pages/Auth/Register";
 
 const App = () => {
   const isOwnerPath = useLocation().pathname.includes("admin");
+  const isLoginPath = useLocation().pathname.includes("login");
+  const isRegisterPath = useLocation().pathname.includes("register");
   return (
     <div>
-      {!isOwnerPath && <Navbar />}
+      {!isOwnerPath && !isLoginPath && !isRegisterPath && <Navbar />}
       <div className='min-h-[70vh]'>
         <Routes>
           {/* Public Routes */}
+          
           <Route path='/' element={<Home />} />
+
+          <Route path='/login' element={<Login />}/>
+          <Route path='/register' element={<Register />}/>
+          
+          
 
           {/* Private Routes */}
           <Route path='/rooms/:id' element={<SpaceDetails />} />
@@ -30,7 +40,7 @@ const App = () => {
         </Routes>
 
       </div>
-      {!isOwnerPath && <Footer />}
+      {!isOwnerPath && !isLoginPath && !isRegisterPath && <Footer />}
 
     </div>
 

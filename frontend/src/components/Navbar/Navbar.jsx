@@ -60,7 +60,7 @@ const Navbar = () => {
 
       {/* Desktop Right */}
       <div>
-        <button className={`px-8 py-2.5 rounded-full ml-4 transition-all duration-500 ${isScrolled ? "text-white bg-black" : "bg-white text-black"}`}>
+        <button className={`px-8 py-2.5 rounded-full ml-4 transition-all duration-500 ${isScrolled ? "text-white bg-black" : "bg-white text-black"}`} onClick={(()=>{navigate("/login")})}>
           Login
 
         </button>
