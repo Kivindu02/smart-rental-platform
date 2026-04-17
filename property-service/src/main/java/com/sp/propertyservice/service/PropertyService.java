@@ -3,6 +3,7 @@ package com.sp.propertyservice.service;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.sp.propertyservice.dto.PropertyRequestDTO;
+import com.sp.propertyservice.dto.PropertyResponseDTO;
 import com.sp.propertyservice.exception.ImageUploadException;
 import com.sp.propertyservice.mapper.PropertyMapper;
 import com.sp.propertyservice.model.Property;
@@ -50,14 +51,19 @@ public class PropertyService {
         return  imageUrls;
     }
 
-    public Property createProperty(PropertyRequestDTO propertyRequestDTO, List<MultipartFile> images) {
+    public PropertyResponseDTO createProperty(PropertyRequestDTO propertyRequestDTO, List<MultipartFile> images) {
 
         if (images != null && !images.isEmpty()) {
             List<String> imageUrls = uploadImage(images);
             propertyRequestDTO.setImageUrls(imageUrls);
         }
-        Property property = PropertyMapper.toModel(propertyRequestDTO);
-        return propertyRepository.save(property);
+        Property property =  propertyRepository.save(PropertyMapper.toModel(propertyRequestDTO));
+        return PropertyMapper.toDTO(property);
+    }
+
+    public List<PropertyResponseDTO> getProperties() {
+        List<Property> properties = propertyRepository.findAll();
+        return properties.stream().map(PropertyMapper::toDTO).toList();
     }
 
 

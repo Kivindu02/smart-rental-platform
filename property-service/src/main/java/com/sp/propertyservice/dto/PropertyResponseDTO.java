@@ -1,33 +1,16 @@
-package com.sp.propertyservice.model;
-
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+package com.sp.propertyservice.dto;
 
 import java.util.List;
 import java.util.UUID;
 
-@Entity
-public class Property {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+public class PropertyResponseDTO {
+
     private UUID id;
-
-    @ElementCollection
     private List<String> imageUrls;
-
-    @NotNull
     private String name;
-
-    @NotNull
     private String address;
-
-    @NotNull
     private String type;
-
-    @NotNull
     private Double price;
-
-    @NotNull
     private String description;
 
     public UUID getId() {
