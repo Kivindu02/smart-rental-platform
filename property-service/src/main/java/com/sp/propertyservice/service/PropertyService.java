@@ -8,7 +8,7 @@ import com.sp.propertyservice.exception.ImageUploadException;
 import com.sp.propertyservice.mapper.PropertyMapper;
 import com.sp.propertyservice.model.Property;
 import com.sp.propertyservice.repository.PropertyRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +31,12 @@ public class PropertyService {
         List<String> imageUrls = new ArrayList<>();
 
         for(MultipartFile file : files) {
+            if (file.isEmpty()) {
+                throw new IllegalArgumentException("File is empty: " + file.getOriginalFilename());
+            }
+            if (!("image/".equals(file.getContentType()) || (file.getContentType() != null && file.getContentType().startsWith("image/")))) {
+                throw new IllegalArgumentException("Only image files are allowed: " + file.getOriginalFilename());
+            }
             try {
                 Map uploadResult = cloudinary.uploader().upload(
                         file.getBytes(),
@@ -51,6 +57,7 @@ public class PropertyService {
         return  imageUrls;
     }
 
+    @Transactional
     public PropertyResponseDTO createProperty(PropertyRequestDTO propertyRequestDTO, List<MultipartFile> images) {
 
         if (images != null && !images.isEmpty()) {

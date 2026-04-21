@@ -5,6 +5,7 @@ import com.sp.propertyservice.dto.PropertyResponseDTO;
 import com.sp.propertyservice.mapper.PropertyMapper;
 import com.sp.propertyservice.model.Property;
 import com.sp.propertyservice.service.PropertyService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +23,7 @@ public class PropertyController {
 
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<PropertyResponseDTO> createProperty(
-            @RequestPart("property")PropertyRequestDTO
+            @Valid @RequestPart("property")PropertyRequestDTO
             propertyRequestDTO,
             @RequestPart(value = "images", required = false) List<MultipartFile> images
             ) {
