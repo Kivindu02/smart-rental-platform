@@ -1,11 +1,17 @@
 package com.sp.authservice.service;
 
+import com.sp.authservice.dto.LoginRequestDTO;
+import com.sp.authservice.dto.LoginResponseDTO;
 import com.sp.authservice.dto.RegisterRequestDTO;
 import com.sp.authservice.exception.EmailAlreadyExistException;
+import com.sp.authservice.exception.InvalidCredentialsException;
 import com.sp.authservice.exception.PasswordMismatchException;
+import com.sp.authservice.exception.UserNotFoundException;
 import com.sp.authservice.mapper.UserMapper;
 import com.sp.authservice.model.User;
 import com.sp.authservice.repository.UserRepository;
+import com.sp.authservice.util.JwtUtil;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,10 +19,15 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder,
+            JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
     public void register(RegisterRequestDTO registerRequestDTO) {
@@ -30,6 +41,23 @@ public class UserService {
 
         User user = userMapper.toModel(registerRequestDTO);
         userRepository.save(user);
+
+    }
+
+    public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
+        User user = userRepository.findByEmail(loginRequestDTO.getEmail()).orElseThrow(() -> new UserNotFoundException("User not Found"));
+
+        if (!passwordEncoder.matches(loginRequestDTO.getPassword(), user.getPassword())) {
+            throw new InvalidCredentialsException("Invalid credential");
+        }
+
+        String token = jwtUtil.generateToken(
+                user.getEmail(),
+                user.getRole().name(),
+                user.getId().toString()
+        );
+
+        return new LoginResponseDTO(token, user.getEmail(), user.getRole().name());
 
     }
 }
