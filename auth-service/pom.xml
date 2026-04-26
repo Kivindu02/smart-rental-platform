@@ -90,6 +90,13 @@
             <version>2.6.0</version>
         </dependency>
 
+        <!-- Email sending -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

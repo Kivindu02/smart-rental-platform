@@ -39,8 +39,30 @@ public class User {
     @Column(nullable = false)
     private Boolean isVerified = false;
 
+    @Column(nullable = true)
+    private String verificationToken;
+
+    @Column(nullable = true )
+    private LocalDateTime tokenExpiresAt;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    public String getVerificationToken() {
+        return verificationToken;
+    }
+
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
+    }
+
+    public LocalDateTime getTokenExpiresAt() {
+        return tokenExpiresAt;
+    }
+
+    public void setTokenExpiresAt(LocalDateTime tokenExpiresAt) {
+        this.tokenExpiresAt = tokenExpiresAt;
+    }
 
     private LocalDateTime updatedAt;
 

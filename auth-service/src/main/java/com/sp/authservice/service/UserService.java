@@ -11,6 +11,8 @@ import com.sp.authservice.util.JwtUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -20,13 +22,15 @@ public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final EmailService emailService;
 
     public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder,
-            JwtUtil jwtUtil) {
+            JwtUtil jwtUtil, EmailService emailService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.emailService = emailService;
     }
 
     public void register(RegisterRequestDTO registerRequestDTO) {
@@ -37,9 +41,14 @@ public class UserService {
         if(userRepository.findByEmail(registerRequestDTO.getEmail()).isPresent()) {
             throw  new EmailAlreadyExistException("Email already registered");
         }
-
+        String verificationToken = UUID.randomUUID().toString();
         User user = userMapper.toModel(registerRequestDTO);
+        user.setVerificationToken(verificationToken);
+        user.setTokenExpiresAt(LocalDateTime.now().plusHours(24));
+
         userRepository.save(user);
+
+        emailService.sendVerificationEmail(user.getEmail(), verificationToken);
 
     }
 
@@ -48,6 +57,10 @@ public class UserService {
 
         if(!user.getActive()) {
             throw new AccountDeactivatedException("Your Account has been deactivated. Please contact support");
+        }
+
+        if (!user.getVerified()) {
+            throw new EmailNotVerifiedException("Please verify your email before logging in");
         }
 
         if (!passwordEncoder.matches(loginRequestDTO.getPassword(), user.getPassword())) {
@@ -68,6 +81,21 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User Not found"));
         user.setActive(false);
+        userRepository.save(user);
+    }
+
+    public void verifyEmail(String token) {
+        User user = userRepository.findByVerificationToken(token)
+                .orElseThrow(() -> new RuntimeException("Invalid verification token"));
+
+        if (user.getTokenExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Verification token has expired");
+        }
+
+        //mark as verified and clear token
+        user.setVerified(true);
+        user.setVerificationToken(null);
+        user.setTokenExpiresAt(null);
         userRepository.save(user);
     }
 }

@@ -33,7 +33,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // no sessions, we use JWT
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/auth/register", "/auth/login").permitAll()  // public routes
+                    .requestMatchers("/auth/register", "/auth/login", "/auth/verify").permitAll()  // public routes
                     .requestMatchers("/h2-console/**").permitAll()                 // allow H2 console
                     .anyRequest().authenticated()                                  // everything else needs token
             )

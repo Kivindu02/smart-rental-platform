@@ -39,6 +39,11 @@ public class AuthController {
     public ResponseEntity<String> deactivateUser(@PathVariable UUID id) {
         userService.deactivateUser(id);
         return ResponseEntity.ok("User deactivated successfully");
+    }
 
+    @GetMapping("/verify")
+    public ResponseEntity<String> verifyEmail(@RequestParam String  token) {
+        userService.verifyEmail(token);
+        return ResponseEntity.ok("Email verified successfully! You can now login.");
     }
 }
