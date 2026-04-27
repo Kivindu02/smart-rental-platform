@@ -30,6 +30,9 @@ public class Property {
     @NotNull
     private String description;
 
+    @Column(nullable = false)
+    private UUID userId;
+
     public UUID getId() {
         return id;
     }
@@ -84,5 +87,13 @@ public class Property {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 }
