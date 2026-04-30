@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.sp.property";
+option java_outer_classname = "PropertyProto";
+
+service PropertyService {
+  rpc ExistsById (PropertyRequest) returns (PropertyResponse);
+}
+
+message PropertyRequest {
+  string propertyId = 1;
+}
+
+message PropertyResponse {
+  bool exists = 1;
+}
