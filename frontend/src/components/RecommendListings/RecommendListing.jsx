@@ -4,7 +4,7 @@ import Title from '../Title/Title'
 
 const RecommendListing = () => {
   return(
-    <div className='flex flex-col items-center px-6 md:px-16 lg:px-24 bg-slate-50 py-20'>
+    <div className='flex flex-col items-center px-6 md:px-16 lg:px-24 bg-slate-50 pt-20 pb-10'>
 
       <Title title='Top Co-Living Choices' subTitle='Discover the best-reviewed rooms and homes perfect for co-living, saving money, and building community.'/>
 

@@ -1,5 +1,6 @@
 import Hero from '../../components/Hero/Hero'
 import RecommendListing from '../../components/RecommendListings/RecommendListing'
+import Testimonials from '../../components/Testimonials/Testimonials'
 
 const Home = () => {
   return (
@@ -7,6 +8,7 @@ const Home = () => {
       <>
         <Hero />
         <RecommendListing />
+        <Testimonials />
         
       </>
       
