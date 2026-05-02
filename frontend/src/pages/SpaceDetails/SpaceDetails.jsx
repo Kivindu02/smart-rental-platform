@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { place_Dummy_list, userDummyData, assets } from '../../assets/assets'
 import StarRating from '../../components/StarRating/StarRating'
+import Reviews from '../../components/Reviews/Reviews'
 
 const SpaceDetails = () => {
   const {id} = useParams()
@@ -82,6 +83,10 @@ const SpaceDetails = () => {
         </div>
         
 
+      </div>
+
+      <div className='mt-20'>
+        <Reviews />
       </div>
 
     </div>
