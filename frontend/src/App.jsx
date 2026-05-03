@@ -8,6 +8,11 @@ import AddListing from "./pages/ListOwner/AddListing";
 import AllListing from "./pages/ListOwner/AllListing";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
+import AdminLayout from "./pages/Admin/AdminLayout";
+import Dashboard from "./pages/Admin/Dashboard/Dashboard";
+import AllProperties from "./pages/Admin/AllProperties/AllProperties";
+import AllReviews from "./pages/Admin/AllReviews/AllReviews";
+import AllUsers from "./pages/Admin/AllUsers/AllUsers";
 
 const App = () => {
   const isOwnerPath = useLocation().pathname.includes("admin");
@@ -35,6 +40,15 @@ const App = () => {
             <Route index element={<AddListing />} />
             <Route path="list-room" element={<AllListing />} />
 
+          </Route>
+
+          <Route path="/admin" element={<AdminLayout/>}>
+
+            <Route index element={<Dashboard />} />
+            <Route path="all-users" element={<AllUsers />}/>
+            <Route path="all-properties" element={<AllProperties />}/>
+            <Route path="all-reviews" element={<AllReviews />}/>
+            
           </Route>
 
         </Routes>
