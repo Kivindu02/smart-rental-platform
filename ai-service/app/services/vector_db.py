@@ -86,3 +86,25 @@ class VectorDBService:
                 ]
             ),
         )
+
+    def search(self, query_vector: list[float], top_k: int = 5, filters: Filter = None) -> list:
+        """
+        Performs a semantic similarity search against the collection.
+
+        Args:
+            query_vector: The embedded query vector to search with.
+            top_k:        Number of closest results to return.
+            filters:      Optional Qdrant Filter to narrow results.
+
+        Returns:
+            A list of ScoredPoint results from Qdrant.
+        """
+        results = self.client.query_points(
+            collection_name=self.collection,
+            query=query_vector,
+            limit=top_k,
+            query_filter=filters,
+        )
+        return results.points
+
+

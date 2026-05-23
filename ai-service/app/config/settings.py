@@ -13,6 +13,6 @@ QDRANT_COLLECTION_NAME = os.getenv("QDRANT_COLLECTION_NAME", "rental-platform")
 EMBEDDING_MODEL_NAME  = os.getenv("EMBEDDING_MODEL_NAME", "all-MiniLM-L6-v2")
 EMBEDDING_VECTOR_SIZE = int(os.getenv("EMBEDDING_VECTOR_SIZE", "384"))
 
-#LLM (OpenAI)
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-OPENAI_MODEL   = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+#Groq LLM
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
