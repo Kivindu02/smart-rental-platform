@@ -176,6 +176,25 @@ public class PropertyService {
         return PropertyMapper.toDTO(property);
     }
 
+    @Transactional
+    public void deletePropertyByUserId(UUID userId) {
+        List<Property> properties = propertyRepository.findByUserId(userId);
+
+        if(properties.isEmpty()) {
+            log.info("No properties found for userId: {}", userId);
+            return;
+        }
+
+        for (Property property : properties) {
+            if (property.getImageUrls() != null && !property.getImageUrls().isEmpty()) {
+                deleteImagesFromCloudinary(property.getImageUrls());
+            }
+
+            propertyRepository.delete(property);
+        }
+        log.info("Deleted {} properties for userId: {}", properties.size(), userId);
+    }
+
 
     // Private-help-methods
 

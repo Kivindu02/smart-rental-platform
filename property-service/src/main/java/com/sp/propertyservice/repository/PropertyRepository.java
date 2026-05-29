@@ -13,4 +13,6 @@ public interface PropertyRepository extends JpaRepository<Property, UUID> {
     // This tells JPA: "Only grab the ID column, nothing else."
     @Query("SELECT p.id FROM Property p")
     List<UUID> findAllIds();
+
+    List<Property> findByUserId(UUID userId);
 }
