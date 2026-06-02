@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 
 @Service
@@ -19,6 +20,7 @@ public class PropertyKafkaProducer {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
     private static final String TOPIC = "property-events";
+    private static final String PROPERTY_DELETED_TOPIC = "property-deleted";
 
     public PropertyKafkaProducer(KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper) {
         this.kafkaTemplate = kafkaTemplate;
@@ -48,6 +50,15 @@ public class PropertyKafkaProducer {
             log.info("Property event {} sent for ID: {}", action, property.getId());
         }catch (Exception e) {
             log.error("AI Sync Failed for Property {}: {}", property.getId(), e.getMessage());
+        }
+    }
+
+    public void sendPropertyDeletedEvent(UUID propertyId) {
+        try {
+            kafkaTemplate.send(PROPERTY_DELETED_TOPIC, propertyId.toString());
+            log.info("PROPERTY_DELETED event sent for propertyId: {}", propertyId);
+        } catch (Exception e) {
+            log.error("Failed to send PROPERTY_DELETED event for {}: {}", propertyId, e.getMessage());
         }
     }
 }
