@@ -160,7 +160,13 @@ public class PropertyService {
         //Trigger AI Sync
         syncWithAI(property, "DELETE");
 
-        log.info("Successfully deleted property and synced with AI: {}", id);
+        try{
+            propertyKafkaProducer.sendPropertyDeletedEvent(property.getId());
+
+        } catch (Exception e) {
+            log.error("Failed to send PROPERTY_DELETED event for {}", property.getId(), e);
+        }
+        log.info("Successfully deleted property, synced with AI and notified review-service: {}", id);
     }
 
     public List<String> getAllPropertyIds() {
@@ -191,6 +197,15 @@ public class PropertyService {
             }
 
             propertyRepository.delete(property);
+
+            syncWithAI(property, "DELETE");
+
+            try{
+                propertyKafkaProducer.sendPropertyDeletedEvent(property.getId());
+
+            } catch (Exception e) {
+                log.error("Failed to send PROPERTY_DELETED event for {}", property.getId(), e);
+            }
         }
         log.info("Deleted {} properties for userId: {}", properties.size(), userId);
     }
