@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -93,6 +94,23 @@ public class ReviewService {
 
         syncWithAI(review, "DELETE");
 
+    }
+
+    @Transactional
+    public void deleteReviewsByPropertyId(UUID propertyId) {
+        List<Review> reviews = reviewRepository.findByPropertyId(propertyId);
+
+        if(reviews.isEmpty()) {
+            log.info("No reviews found for propertyId: {}", propertyId);
+            return;
+        }
+
+        for (Review review: reviews) {
+            reviewRepository.delete(review);
+            syncWithAI(review, "DELETE");
+        }
+
+        log.info("Deleted {} reviews for propertyId: {}", reviews.size(), propertyId);
     }
 
     // private-methods
