@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: review-service
+  namespace: smart-rental
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: review-service
+  template:
+    metadata:
+      labels:
+        app: review-service
+    spec:
+      containers:
+        - name: review-service
+          image: kivindu744/review-service:latest
+          ports:
+            - containerPort: 4003
+          env:
+            - name: JWT_SECRET
+              valueFrom: { secretKeyRef: { name: app-secrets, key: JWT_SECRET } }
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://review-service-db:5432/db"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom: { secretKeyRef: { name: app-secrets, key: REVIEW_DB_USER } }
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom: { secretKeyRef: { name: app-secrets, key: REVIEW_DB_PASSWORD } }
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: "update"
+            - name: SPRING_SQL_INIT_MODE
+              value: "always"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: review-service
+  namespace: smart-rental
+spec:
+  selector:
+    app: review-service
+  ports:
+    - port: 4003
+      targetPort: 4003
