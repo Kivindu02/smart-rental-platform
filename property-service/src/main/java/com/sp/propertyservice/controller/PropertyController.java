@@ -56,6 +56,13 @@ public class PropertyController {
         return  ResponseEntity.ok(propertyService.getPropertyWithOwner());
     }
 
+    @GetMapping("/my-properties")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<PropertyResponseDTO>> getMyProperties() {
+        UUID userId = getAuthenticatedUserId();
+        return ResponseEntity.ok(propertyService.getMyProperties(userId));
+    }
+
     @PutMapping(value = "/{id}", consumes = "multipart/form-data")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<PropertyResponseDTO> updateProperty(
@@ -89,8 +96,8 @@ public class PropertyController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PropertyResponseDTO> getPropertyById(@PathVariable UUID id) {
-        return ResponseEntity.ok(propertyService.getPropertyById(id));
+    public ResponseEntity<PropertyWithOwnerDTO> getPropertyById(@PathVariable UUID id) {
+        return ResponseEntity.ok(propertyService.getPropertyByIdWithOwner(id));
     }
 
 

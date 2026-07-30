@@ -97,6 +97,13 @@ public class PropertyService {
         return properties.stream().map(PropertyMapper::toDTO).toList();
     }
 
+    public List<PropertyResponseDTO> getMyProperties(UUID userId) {
+        return propertyRepository.findByUserId(userId)
+                .stream()
+                .map(PropertyMapper::toDTO)
+                .toList();
+    }
+
     public List<PropertyWithOwnerDTO> getPropertyWithOwner() {
         return propertyRepository.findAll()
                 .stream()
@@ -176,10 +183,11 @@ public class PropertyService {
                 .toList();
     }
 
-    public PropertyResponseDTO getPropertyById(UUID id) {
+    public PropertyWithOwnerDTO getPropertyByIdWithOwner(UUID id) {
         Property property = propertyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Property not found"));
-        return PropertyMapper.toDTO(property);
+        UserResponse owner = userGrpcClient.getUserById(property.getUserId().toString());
+        return new PropertyWithOwnerDTO(property, owner);
     }
 
     @Transactional
