@@ -66,6 +66,26 @@ public class ReviewService {
 
     }
 
+    public List<ReviewResponseDTO> getAllReviews() {
+        return reviewRepository.findAll()
+                .stream()
+                .map(review -> {
+                    UserResponse user = userGrpcClient.getUserById(review.getUserId().toString());
+                    return ReviewMapper.toDTO(review, user);
+                })
+                .toList();
+    }
+
+    public List<ReviewResponseDTO> getReviewsByProperty(UUID propertyId) {
+        return reviewRepository.findByPropertyId(propertyId)
+                .stream()
+                .map(review -> {
+                    UserResponse user = userGrpcClient.getUserById(review.getUserId().toString());
+                    return ReviewMapper.toDTO(review, user);
+                })
+                .toList();
+    }
+
     @Transactional
     public ReviewResponseDTO updateReview(UUID reviewId, ReviewRequestDTO dto, UUID loggedInUserId) {
         Review existing = reviewRepository.findById(reviewId)

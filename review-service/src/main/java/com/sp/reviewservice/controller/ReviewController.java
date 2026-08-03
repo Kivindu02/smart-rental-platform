@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -37,6 +38,17 @@ public class ReviewController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(reviewService.createReview(dto, userId, propertyId));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ReviewResponseDTO>> getAllReviews() {
+        return ResponseEntity.ok(reviewService.getAllReviews());
+    }
+
+    @GetMapping("/property/{propertyId}")
+    public ResponseEntity<List<ReviewResponseDTO>> getReviewsByProperty(
+            @PathVariable UUID propertyId) {
+        return ResponseEntity.ok(reviewService.getReviewsByProperty(propertyId));
     }
 
     @PutMapping("/{reviewId}")
