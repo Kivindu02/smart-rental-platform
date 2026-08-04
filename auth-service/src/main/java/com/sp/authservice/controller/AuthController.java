@@ -3,6 +3,7 @@ package com.sp.authservice.controller;
 import com.sp.authservice.dto.LoginRequestDTO;
 import com.sp.authservice.dto.LoginResponseDTO;
 import com.sp.authservice.dto.RegisterRequestDTO;
+import com.sp.authservice.dto.UserResponseDTO;
 import com.sp.authservice.service.UserService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -37,6 +39,12 @@ public class AuthController {
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
         LoginResponseDTO responseDTO = userService.login(loginRequestDTO);
         return  ResponseEntity.ok(responseDTO);
+    }
+
+    @GetMapping("/users")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @PutMapping("/users/{id}/deactivate")

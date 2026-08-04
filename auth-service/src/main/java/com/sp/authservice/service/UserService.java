@@ -3,6 +3,7 @@ package com.sp.authservice.service;
 import com.sp.authservice.dto.LoginRequestDTO;
 import com.sp.authservice.dto.LoginResponseDTO;
 import com.sp.authservice.dto.RegisterRequestDTO;
+import com.sp.authservice.dto.UserResponseDTO;
 import com.sp.authservice.exception.*;
 import com.sp.authservice.kafka.UserKafkaProducer;
 import com.sp.authservice.mapper.UserMapper;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -87,6 +89,13 @@ public class UserService {
 
         return new LoginResponseDTO(token, user.getEmail(), user.getRole().name());
 
+    }
+
+    public List<UserResponseDTO> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(userMapper::toDTO)
+                .toList();
     }
 
     public void deactivateUser(UUID id) {

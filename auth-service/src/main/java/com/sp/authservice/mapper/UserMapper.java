@@ -1,6 +1,7 @@
 package com.sp.authservice.mapper;
 
 import com.sp.authservice.dto.RegisterRequestDTO;
+import com.sp.authservice.dto.UserResponseDTO;
 import com.sp.authservice.enums.Role;
 import com.sp.authservice.model.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,5 +26,21 @@ public class UserMapper {
         user.setRole(Role.USER);
         return user;
 
+    }
+
+    public UserResponseDTO toDTO(User user) {
+        if (user == null) {
+            return null;
+        }
+
+        UserResponseDTO dto = new UserResponseDTO();
+        dto.setId(user.getId());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setEmail(user.getEmail());
+        dto.setPhoneNo(user.getPhoneNo());
+        dto.setRole(user.getRole().name());
+        dto.setActive(user.getActive());
+        return dto;
     }
 }
