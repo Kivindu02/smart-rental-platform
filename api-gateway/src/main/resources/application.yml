@@ -20,6 +20,6 @@ spring:
                 - Path=/property/**
 
             - id: review-service
-              uri: http://review-service:4003
+              uri: http://review-service:4002
               predicates:
                 - Path=/reviews/**
