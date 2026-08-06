@@ -2,10 +2,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { assets } from "../../assets/assets.js";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
+import { useAuth } from '../../context/AuthContext.jsx';
 
 const Navbar = () => {
 
   const navigate = useNavigate();
+  const { isAuthenticated, logout } = useAuth();
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -34,6 +36,11 @@ const Navbar = () => {
 
   }, [location.pathname]);
 
+  const handleLogout = () => {
+        logout();          //clear token from context and localStorage
+        navigate('/login');
+    };
+
   return(
     <nav className={`fixed top-0 left-0  w-full flex items-center justify-between px-4 md:px-16 lg:px-24 xl:px-32 transition-all duration-500 z-50 ${isScrolled ? "bg-white/80 shadow-md text-gray-700 backdrop-blur-lg py-3 md:py-4" : "py-4 md:py-6"}`}>
 
@@ -53,17 +60,36 @@ const Navbar = () => {
 
           </a>
         ))}
-        <button className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? 'text-black' : 'text-white'} transition-all`} onClick={() => navigate("/owner")}>
-          Dashboard
-        </button>
+        {/*Show Dashboard only when logged in */}
+        {isAuthenticated() && (
+            <button
+                className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? 'text-black' : 'text-white'} transition-all`}
+                onClick={() => navigate("/owner")}
+            >
+                Dashboard
+            </button>
+        )}
       </div>
 
       {/* Desktop Right */}
       <div>
-        <button className={`px-8 py-2.5 rounded-full ml-4 transition-all duration-500 ${isScrolled ? "text-white bg-black" : "bg-white text-black"}`} onClick={(()=>{navigate("/login")})}>
-          Login
-
-        </button>
+          {isAuthenticated() ? (
+            //Show Logout when logged in
+            <button
+                className={`px-8 py-2.5 rounded-full ml-4 transition-all duration-500 cursor-pointer ${isScrolled ? "text-white bg-black" : "bg-white text-black"}`}
+                onClick={handleLogout}
+            >
+                Logout
+            </button>
+        ) : (
+            //Show Login when not logged in
+            <button
+                className={`px-8 py-2.5 rounded-full ml-4 transition-all duration-500 cursor-pointer ${isScrolled ? "text-white bg-black" : "bg-white text-black"}`}
+                onClick={() => navigate("/login")}
+            >
+                Login
+            </button>
+        )}
 
       </div>
 

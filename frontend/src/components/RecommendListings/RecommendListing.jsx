@@ -1,8 +1,28 @@
-import { place_Dummy_list } from '../../assets/assets'
 import PlaceCard from '../PlaceCard/PlaceCard'
 import Title from '../Title/Title'
+import { getAllProperties } from '../../services/propertyService'
+import { useEffect, useState } from 'react'
 
 const RecommendListing = () => {
+    const [properties, setProperties] = useState([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        fetchProperties()
+    }, [])
+
+    const fetchProperties = async () => {
+        try {
+            const data = await getAllProperties()
+            setProperties(data)
+        } catch (err) {
+            console.error(err.response?.data?.message || "Failed to load properties")
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    if (loading) return <p>Loading...</p>
   return(
     <div className='flex flex-col items-center px-6 md:px-16 lg:px-24 bg-slate-50 pt-20 pb-10'>
 
@@ -10,8 +30,8 @@ const RecommendListing = () => {
 
       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-20 w-full ml-20'>
 
-        {place_Dummy_list.slice(0,8).map((place)=>(
-          <PlaceCard key={place._id} place={place}/>
+        {properties.slice(0,8).map((place)=>(
+          <PlaceCard key={place.id} place={place}/>
         ))}
 
       </div>

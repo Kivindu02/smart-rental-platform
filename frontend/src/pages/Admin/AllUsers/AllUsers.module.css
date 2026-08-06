@@ -16,53 +16,67 @@
   overflow: hidden;
 }
 
-/* Grid row */
+/* Grid row - Updated column definitions for reliable alignment */
 .listTableFormat {
   display: grid;
-  grid-template-columns: 80px 2fr 1fr 1fr 200px;
+  /* Fixed width for actions, flexible minmax for text columns */
+  grid-template-columns: 1fr 3fr 1.2fr 0.8fr 0.8fr 190px;
   align-items: center;
   padding: 12px 15px;
-  column-gap: 20px;
+  gap: 15px;
   border-bottom: 1px solid #e5e5e5;
 }
 
-/* separate class */
+/* Grid items handling for clean alignment and text overflow */
+.listTableFormat > * {
+  min-width: 0; /* Critical: allows grid cells to shrink below content width */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Header row */
 .title {
   background-color: #f9f9f9;
   font-weight: 600;
+  color: #333;
 }
 
 /* Image styling */
 .image {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   object-fit: cover;
   border-radius: 6px;
 }
 
-/* Actions */
+/* Actions column container */
 .actions {
   display: flex;
-  gap: 10px;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-start;
+  overflow: visible; /* Keeps buttons visible */
 }
 
 /* Buttons */
-.deleteBtn {
-  padding: 6px 10px;
+.deleteBtn,
+.activateBtn {
+  padding: 6px 12px;
   border: none;
-  background-color: #f44336;
   color: white;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.deleteBtn {
+  background-color: #f44336;
 }
 
 .activateBtn {
-  padding: 6px 10px;
-  border: none;
-  background-color: #dfdc26;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
+  background-color: #d4d11e;
 }
 
 /* Hover */
@@ -70,10 +84,10 @@
   background-color: #fafafa;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
+/* Responsive breakpoint */
+@media (max-width: 768px) {
   .listTableFormat {
-    grid-template-columns: 60px 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 
   .title {
@@ -81,8 +95,7 @@
   }
 
   .actions {
-    grid-column: span 3;
-    justify-content: flex-start;
-    margin-top: 10px;
+    grid-column: span 2;
+    margin-top: 5px;
   }
 }

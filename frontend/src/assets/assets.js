@@ -54,7 +54,8 @@ export const assets = {
   location_icon,
   dashboard_icon,
   list_icon,
-  rent_auth_cover
+  rent_auth_cover,
+  place_1
 
 }
 

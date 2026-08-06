@@ -1,41 +1,54 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getReviewsByProperty, createReview } from "../../services/reviewService";
+import { useAuth } from "../../context/AuthContext";
 
-const Reviews = () => {
-  const [reviews, setReviews] = useState([
-    {
-      id: 1,
-      name: "Kavindu",
-      rating: 5,
-      comment: "Amazing place! Clean and comfortable.",
-      date: "2026-07-10",
-    },
-  ]);
+const Reviews = ({ propertyId }) => {
+  const { isAuthenticated } = useAuth();
+    const [reviews, setReviews] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+    const [form, setForm] = useState({
+        rating: 5,
+        comment: ""
+    });
 
-  const [form, setForm] = useState({
-    name: "",
-    rating: 5,
-    comment: "",
-  });
+    useEffect(() => {
+        fetchReviews();
+    }, [propertyId]);
 
-  // Handle input change
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  // Submit review
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const newReview = {
-      id: Date.now(),
-      ...form,
-      date: new Date().toISOString().split("T")[0],
+    const fetchReviews = async () => {
+        try {
+            const data = await getReviewsByProperty(propertyId);
+            setReviews(data);
+        } catch (err) {
+            setError(err.response?.data?.message || "Failed to load reviews");
+        } finally {
+            setLoading(false);
+        }
     };
 
-    setReviews([newReview, ...reviews]);
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
 
-    setForm({ name: "", rating: 5, comment: "" });
-  };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!isAuthenticated()) {
+            alert("Please login to submit a review");
+            return;
+        }
+
+        try {
+            const newReview = await createReview(propertyId, form);
+            setReviews([newReview, ...reviews]); // add to top
+            setForm({ rating: 5, comment: "" }); // reset form
+        } catch (err) {
+            alert(err.response?.data?.message || "Failed to submit review");
+        }
+    };
+
+    if (loading) return <p>Loading reviews...</p>;
 
   return (
     <div className="py-16 px-6 md:px-16 bg-gray-50 rounded-[20px]">
@@ -45,17 +58,22 @@ const Reviews = () => {
         Customer Reviews
       </h2>
 
+      {error && <p className="text-red-500 mb-4">{error}</p>}
+
       <div className="grid md:grid-cols-3 gap-8">
 
         {/* 🔹 Review List */}
         <div className="md:col-span-2 space-y-6">
+          {reviews.length === 0 && (
+              <p className="text-gray-500">No reviews yet. Be the first to review!</p>
+          )}
           {reviews.map((r) => (
             <div key={r.id} className="bg-white p-5 rounded-xl shadow-sm border border-gray-300">
 
               {/* Header */}
               <div className="flex justify-between items-center">
-                <p className="font-medium text-gray-800">{r.name}</p>
-                <p className="text-sm text-gray-500">{r.date}</p>
+                <p className="font-medium text-gray-800">{r.reviewer?.firstName} {r.reviewer?.lastName}</p>
+                <p className="text-sm text-gray-500">{r.createdAt?.split('T')[0]}</p>
               </div>
 
               {/* Rating */}
@@ -75,51 +93,44 @@ const Reviews = () => {
 
           <h3 className="text-lg font-semibold mb-4">Write a Review</h3>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          {!isAuthenticated() ? (
+              <p className="text-gray-500 text-sm">Please login to write a review.</p>
+          ) : (
+              <form onSubmit={handleSubmit} className="space-y-4">
+               
+                {/* Rating */}
+                <select
+                  name="rating"
+                  value={form.rating}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                >
+                  {[5,4,3,2,1].map((r) => (
+                    <option key={r} value={r}>{r} Stars</option>
+                  ))}
+                </select>
 
-            {/* Name */}
-            <input
-              type="text"
-              name="name"
-              placeholder="Your name"
-              value={form.name}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-orange-400"
-              required
-            />
+                {/* Comment */}
+                <textarea
+                  name="comment"
+                  placeholder="Write your review..."
+                  value={form.comment}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                  rows="4"
+                  required
+                />
 
-            {/* Rating */}
-            <select
-              name="rating"
-              value={form.rating}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
-            >
-              {[5,4,3,2,1].map((r) => (
-                <option key={r} value={r}>{r} Stars</option>
-              ))}
-            </select>
+                {/* Submit */}
+                <button
+                  type="submit"
+                  className="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition"
+                >
+                  Submit Review
+                </button>
 
-            {/* Comment */}
-            <textarea
-              name="comment"
-              placeholder="Write your review..."
-              value={form.comment}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
-              rows="4"
-              required
-            />
-
-            {/* Submit */}
-            <button
-              type="submit"
-              className="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition"
-            >
-              Submit Review
-            </button>
-
-          </form>
+              </form>
+          )}
         </div>
 
       </div>

@@ -1,21 +1,35 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { place_Dummy_list, userDummyData, assets } from '../../assets/assets'
+import { assets } from '../../assets/assets'
 import StarRating from '../../components/StarRating/StarRating'
 import Reviews from '../../components/Reviews/Reviews'
+import { getPropertyById } from '../../services/propertyService'
 
 const SpaceDetails = () => {
-  const {id} = useParams()
-  const [mainImage, setMainImage] = useState(null)
-  const [space, setSpace] = useState(null)
+    const { id } = useParams()
+    const [mainImage, setMainImage] = useState(null)
+    const [space, setSpace] = useState(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState("")
 
-  useEffect(() => {
-    const space = place_Dummy_list.find((s) => s._id === id)
-    if (space) {
-     setSpace(space)
-     setMainImage(space.images[0])
+    useEffect(() => {
+        fetchProperty()
+    }, [id])
+
+    const fetchProperty = async () => {
+        try {
+            const data = await getPropertyById(id)
+            setSpace(data)
+            setMainImage(data.imageUrls?.[0])
+        } catch (err) {
+            setError(err.response?.data?.message || "Failed to load property")
+        } finally {
+            setLoading(false)
+        }
     }
-    }, [id]);
+
+    if (loading) return <p className="py-28 px-16">Loading...</p>
+    if (error) return <p className="py-28 px-16 text-red-500">{error}</p>
 
   return space &&(
     <div className="py-28 md:py-35 px-4 md:px-16 lg:px-24 xl:px-32">
@@ -31,16 +45,17 @@ const SpaceDetails = () => {
 
       <div className='flex items-center gap-1 text-sm mt-2'>
           <img src={assets.location_icon} alt="location-icon" />
-          <span>{space.location}</span>
+          <span>{space.address}</span>
       </div>
 
       {/* Room Images */}
       <div className='flex flex-col lg:flex-row mt-6 gap-6'>
         <div className='lg:w-1/2 w-full'>
-          <img src={mainImage} alt="Room Image"  className='w-full rounded-xl shadow-lg object-cover'/>
+          <img src={mainImage || assets.place_1} alt="Room Image"  className='w-full rounded-xl shadow-lg object-cover'
+          onError={(e) => e.target.src = assets.place_1}/>
         </div>
         <div className='grid grid-cols-2 gap-4 lg:w-1/2 w-full'>
-          {space?.images.length > 1 && space.images.map((image, index)=>(
+          {space?.imageUrls?.length > 1 && space.imageUrls.map((image, index)=>(
             <img onClick={()=> setMainImage(image)} 
             key={index} src={image} alt="Room Image" className={`w-full rounded-xl shadow-md object-cover cursor-pointer ${mainImage === image && 'outline outline-3 outline-orange-500'}`}/>
           ))}
@@ -54,7 +69,7 @@ const SpaceDetails = () => {
 
           <div className="flex flex-col text-lg">
         
-            <p className='mb-2'>Location: {space.location}</p>
+            <p className='mb-2'>Location: {space.address}</p>
             
             <p>Type: {space.type}</p>
 
@@ -63,10 +78,10 @@ const SpaceDetails = () => {
           <div className="flex flex-col text-lg">
 
             
-            <p className='mb-2'>Owner: {userDummyData.username}</p>
+            <p className='mb-2'>Owner: {space.owner?.firstName} {space.owner?.lastName}</p>
             
-            <p className='mb-2'>Contact no: {userDummyData.contactno}</p>
-            <p>Email: {userDummyData.email}</p>
+            <p className='mb-2'>Contact no: {space.owner?.phoneNo}</p>
+            <p>Email: {space.owner?.email}</p>
 
           </div>
 
@@ -79,14 +94,14 @@ const SpaceDetails = () => {
 
         <div>
           <p className='text-lg mb-2'>Description:</p>
-          <p className='text-lg'>Home is more than just a place—it's a feeling of comfort, safety, and belonging. It’s where we create memories with loved ones, unwind after a long day, and express ourselves freely. Whether big or small, cozy or spacious, home is the heart of our lives, filled with warmth and familiarity. It’s the one place in the world that truly feels like our own.</p>
+          <p className='text-lg'>{space.description}</p>
         </div>
         
 
       </div>
 
       <div className='mt-20'>
-        <Reviews />
+        {id && <Reviews propertyId={id} />}
       </div>
 
     </div>

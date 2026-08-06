@@ -13,6 +13,7 @@ import Dashboard from "./pages/Admin/Dashboard/Dashboard";
 import AllProperties from "./pages/Admin/AllProperties/AllProperties";
 import AllReviews from "./pages/Admin/AllReviews/AllReviews";
 import AllUsers from "./pages/Admin/AllUsers/AllUsers";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 const App = () => {
   const isOwnerPath = useLocation().pathname.includes("admin");
@@ -35,7 +36,11 @@ const App = () => {
           {/* Private Routes */}
           <Route path='/rooms/:id' element={<SpaceDetails />} />
 
-          <Route path='/owner' element={<Layout />}>
+          <Route path='/owner' element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+            }>
             
             <Route index element={<AddListing />} />
             <Route path="list-room" element={<AllListing />} />

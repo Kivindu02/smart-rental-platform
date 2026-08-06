@@ -1,10 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Auth.css";
 import { assets } from "../../assets/assets";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { login as loginService } from "../../services/authService";
+import { useAuth } from "../../context/AuthContext";
 
 
 const Login = () => {
+  const { login } = useAuth()
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+            const data = await loginService(email, password);
+
+            // Save token to localStorage
+            login(data.token, data.role);
+
+            // Redirect based on role
+            if (data.role === "ADMIN") {
+                navigate("/admin");
+            } else {
+                navigate("/");
+            }
+        } catch (err) {
+            setError(err.response?.data?.message || "Invalid credentials");
+        } finally {
+            setLoading(false);
+        }
+  }
   
   return (
     <div className="auth-container">
@@ -17,16 +49,20 @@ const Login = () => {
           Sign in to start managing your projects.
         </p>
 
-        <form className="auth-form">
+        {error && <p className="error-text">{error}</p>}
+
+        <form className="auth-form" onSubmit={handleSubmit}>
           <label>Email</label>
-          <input type="email" placeholder="Example@email.com" />
+          <input type="email" placeholder="Example@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required/>
 
           <label>Password</label>
-          <input type="password" placeholder="At least 8 characters" />
+          <input type="password" placeholder="At least 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} required/>
 
           <p className="forgot">Forgot Password?</p>
 
-          <button className="primary-btn">Sign in</button>
+          <button className="primary-btn" disabled={loading}>
+            {loading ? "Signing in..." : "Sign in"}
+          </button>
         </form>
 
         <div className="divider">Or</div>
