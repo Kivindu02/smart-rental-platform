@@ -47,6 +47,7 @@ public class UserService {
         this.userKafkaProducer = userKafkaProducer;
     }
 
+    @Transactional
     public void register(RegisterRequestDTO registerRequestDTO) {
         if(!registerRequestDTO.getPassword().equals(registerRequestDTO.getConfirmPassword())) {
             throw new PasswordMismatchException("Password do not match");
