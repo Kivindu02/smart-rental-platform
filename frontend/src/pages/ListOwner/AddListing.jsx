@@ -11,9 +11,9 @@ const AddListing = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
     const [formData, setFormData] = useState({
-        name: '',
-        type: '',
-        address: '',
+        title: '',
+        listing_type: '',
+        location: '',
         price: '',
         description: ''
       })
