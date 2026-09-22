@@ -16,6 +16,9 @@ spec:
       containers:
         - name: auth-service
           image: kivindu744/auth-service:latest
+          envFrom:
+            - configMapRef:
+                name: rental-config
           ports:
             - containerPort: 4001
             - containerPort: 9001
